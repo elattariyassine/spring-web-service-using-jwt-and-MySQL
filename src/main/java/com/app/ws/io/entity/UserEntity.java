@@ -1,11 +1,10 @@
 package com.app.ws.io.entity;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity(name = "users")
 public class UserEntity implements Serializable {
@@ -14,9 +13,9 @@ public class UserEntity implements Serializable {
 	
 	@Id
 	@GeneratedValue
-	private long id;
+	private long user_id;
 	
-	@Column(nullable = false)
+	@Column(nullable = false, name = "public")
 	private String userId;
 	
 	@Column(nullable = false, length = 50)
@@ -35,13 +34,11 @@ public class UserEntity implements Serializable {
 	@Column(nullable = false)
 	private boolean emailVerificationStatus = false;
 
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinTable(name = "USERS_ROLES", joinColumns = {
+			@JoinColumn(name = "user_id") }, inverseJoinColumns = {
+			@JoinColumn(name = "role_id") })
+	private Set<RoleEntity> roles = new HashSet<>();
 
 	public String getUserId() {
 		return userId;
@@ -98,5 +95,20 @@ public class UserEntity implements Serializable {
 	public void setEmailVerificationStatus(boolean emailVerificationStatus) {
 		this.emailVerificationStatus = emailVerificationStatus;
 	}
-	
+
+	public long getUser_id() {
+		return user_id;
+	}
+
+	public void setUser_id(long user_id) {
+		this.user_id = user_id;
+	}
+
+	public Set<RoleEntity> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set<RoleEntity> roles) {
+		this.roles = roles;
+	}
 }
